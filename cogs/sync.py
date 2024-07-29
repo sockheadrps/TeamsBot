@@ -9,9 +9,11 @@ class Sync(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def sync(self, ctx: commands.Context, *guilds: discord.Guild, spec: Optional[Literal["~", "*", "^"]] = None) -> None:
+    async def sync(
+        self, ctx: commands.Context, *guilds: discord.Guild, spec: Optional[Literal["~", "*", "^"]] = None
+    ) -> None:
         print(ctx.guild)
-        print('sync ')
+        print("sync ")
         await ctx.send(f"guild {ctx.guild}")
 
         if not guilds:
@@ -27,9 +29,7 @@ class Sync(commands.Cog):
             else:
                 synced = await ctx.bot.tree.sync()
 
-            await ctx.send(
-                f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}"
-            )
+            await ctx.send(f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}")
             return
 
         ret = 0

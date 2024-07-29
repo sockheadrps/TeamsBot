@@ -1,6 +1,7 @@
 from cogs.teams import generate_teams
 import random
 
+
 class MockMember:
     def __init__(self, name):
         self.name = name
@@ -16,10 +17,11 @@ def test_quads_full_teams():
     total_members = random.choice(random_amt_members)
     members = [MockMember(f"Member{i}") for i in range(total_members)]
     teams = generate_teams(team_size, members)
-    
+
     assert len(teams) == total_members // team_size
     for team in teams:
         assert len(team) == team_size
+
 
 def test_quads_one_extra():
     """Test generating teams with one extra member"""
@@ -29,21 +31,22 @@ def test_quads_one_extra():
     random_amt_members = [team_size * i for i in range(1, 10)]
 
     for total_members in random_amt_members:
-            # Add one extra member
-            total_members_with_extra = total_members + 1
-            members = [MockMember(f"Member{i}") for i in range(total_members_with_extra)]
-            teams = generate_teams(team_size, members)
+        # Add one extra member
+        total_members_with_extra = total_members + 1
+        members = [MockMember(f"Member{i}") for i in range(total_members_with_extra)]
+        teams = generate_teams(team_size, members)
 
-            # if 5 members, there should be 2 teams, each with 2 or 3 members
-            if total_members_with_extra == 5:
-                assert len(teams) == 2
-                for team in teams:
-                    assert len(team) >= 2
-            # Otherwise, teams should have no less than 3 members
-            else:
-                for team in teams:
-                    assert len(team) >= 3
-                    assert len(team) <= 4
+        # if 5 members, there should be 2 teams, each with 2 or 3 members
+        if total_members_with_extra == 5:
+            assert len(teams) == 2
+            for team in teams:
+                assert len(team) >= 2
+        # Otherwise, teams should have no less than 3 members
+        else:
+            for team in teams:
+                assert len(team) >= 3
+                assert len(team) <= 4
+
 
 def test_quads_two_extra():
     """Test generating teams with two extra members"""
@@ -63,11 +66,12 @@ def test_quads_two_extra():
             assert len(teams) == 2
             for team in teams:
                 assert len(team) == 3
-        # Otherwise, teams should have no less than 3 members
+        # Otherwise, teams should have no less than 3 members and no more than 4
         else:
             for team in teams:
                 assert len(team) >= 3
                 assert len(team) <= 4
+
 
 def test_quads_three_extra():
     """Test generating teams with three extra members"""
@@ -93,6 +97,7 @@ def test_quads_three_extra():
             assert len(team) >= 3
             assert len(team) <= 4
 
+
 def test_generate_duos_even_members():
     """Test generating full teams of 2"""
     team_size = 2
@@ -100,11 +105,12 @@ def test_generate_duos_even_members():
     total_members = random.choice(random_amt_members)
     members = [MockMember(f"Member{i}") for i in range(total_members)]
     teams = generate_teams(team_size, members)
-    
+
     # In duos, with even number of members, there should be no teams with less than 2 members
     assert len(teams) == total_members // team_size
     for team in teams:
         assert len(team) == team_size
+
 
 def test_duos_one_extra():
     """Test generating teams with one extra member"""
