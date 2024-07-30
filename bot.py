@@ -13,7 +13,6 @@ class Bot(commands.Bot):
         self.config = configparser.ConfigParser()
         self.config.read("config.ini")
 
-        # Set class variables from config
         self.COMMAND_PREFIX = self.config.get("Settings", "COMMAND_PREFIX")
         self.CATEGORY_NAME = self.config.get("Settings", "CATEGORY_NAME")
         self.LOBBY_CHANNEL_NAME = self.config.get("Settings", "LOBBY_CHANNEL_NAME")
@@ -24,9 +23,8 @@ class Bot(commands.Bot):
 
     async def on_ready(self):
         print(f"Logged in as {self.user}")
-        guild = self.guilds[0]  # Assumes bot is in only one guild
+        guild = self.guilds[0]
 
-        # Check if the category exists
         self.category = discord.utils.get(guild.categories, name=self.CATEGORY_NAME)
 
         if not self.category:

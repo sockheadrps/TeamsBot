@@ -210,6 +210,12 @@ class Teams(commands.Cog):
         view = InitialView(self.bot, interaction.user.name)
         await interaction.response.send_message("Choose an option:", view=view, ephemeral=True)
 
+    @app_commands.command(name="clearvc", description="Clear the voice channels the bot has made")
+    async def clearvc(self, interaction: discord.Interaction):
+        for channel in self.bot.category:
+            await channel.delete()
+        await interaction.response.send_message("Voice channels have been cleared!", ephemeral=True)
+
 
 async def setup(bot):
     await bot.add_cog(Teams(bot))
