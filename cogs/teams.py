@@ -16,13 +16,13 @@ def generate_teams(team_size: int, participants: list[discord.Member]) -> list[l
     else:
         for i in range(0, len(participants), team_size):
             teams.append(participants[i : i + team_size])
-        passes = 0
-        while len(teams[-1]) < team_size - 1:
-            move_player = teams[passes].pop()
-            teams[-1].append(move_player)
-            passes += 1
-            if len(teams) == 2:
-                break
+
+        while len(teams[-1]) < team_size - 1 and len(teams) > 1:
+            for i in range(len(teams) - 2, -1, -1):
+                if len(teams[i]) > 1:
+                    move_player = teams[i].pop()
+                    teams[-1].append(move_player)
+                    break
 
     return teams
 
@@ -109,7 +109,15 @@ class SecondaryView(View):
             await interaction.response.send_message("No valid members to form teams!", ephemeral=True)
             return
 
-        teams = generate_teams(2, members)
+        if self.state == "duo":
+            team_size = 2
+        elif self.state == "squads":
+            team_size = 4
+        else:
+            await interaction.response.send_message("Invalid state!", ephemeral=True)
+            return
+
+        teams = generate_teams(team_size, members)
         await self.show_final_view(interaction, teams)
 
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.danger, custom_id="secondary_cancel_button")
@@ -139,7 +147,6 @@ class FinalView(View):
             channel = await create_voice_channel(self.bot.guilds[0], self.bot.CATEGORY_NAME, f"Team {i + 1}")
             for member in team:
                 await member.move_to(channel)
-                print(f"Moving {member} to {channel}")
 
         await interaction.response.send_message("Teams generated and channels created!", ephemeral=True)
         self.stop()

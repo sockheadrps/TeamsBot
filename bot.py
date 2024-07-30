@@ -29,19 +29,15 @@ class Bot(commands.Bot):
         # Check if the category exists
         self.category = discord.utils.get(guild.categories, name=self.CATEGORY_NAME)
 
-        # If the category doesn't exist, create it
         if not self.category:
-            await discord.Guild.create_category(guild, self.CATEGORY_NAME)
-            self.category = discord.utils.get(guild.categories, name=self.CATEGORY_NAME)
+            print("Creating category")
+            self.category = await guild.create_category(self.CATEGORY_NAME)
 
-        # Check if the lobby channel exists in the specified category
         self.lobby_channel = discord.utils.get(self.category.voice_channels, name=self.LOBBY_CHANNEL_NAME)
 
-        # if it doesn't exist, create it
         if not self.lobby_channel:
+            print("Creating lobby channel")
             self.lobby_channel = await self.category.create_voice_channel(self.LOBBY_CHANNEL_NAME)
-            with open("config.ini", "w") as configfile:
-                self.config.write(configfile)
 
     async def setup_hook(self):
         for f in os.listdir("./cogs"):
