@@ -54,7 +54,8 @@ async def create_voice_channel(guild: discord.Guild, category_name: str, channel
 
 
 class IgnoreMemberMenu(Select):
-    def __init__(self, members):
+    def __init__(self, members, original_user):
+        self.original_user = original_user
         if not members:
             options = [discord.SelectOption(label="No members available", value="none")]
         else:
@@ -127,7 +128,7 @@ class SecondaryView(View):
         super().__init__(timeout=60)
         self.bot = bot
         self.state = state
-        self.ignore_menu = IgnoreMemberMenu(self.bot.lobby_channel.members)
+        self.ignore_menu = IgnoreMemberMenu(self.bot.lobby_channel.members, user_name)
         self.add_item(self.ignore_menu)
         self.original_user = user_name
 

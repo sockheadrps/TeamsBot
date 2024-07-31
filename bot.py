@@ -3,6 +3,8 @@ import os
 from discord.ext import commands
 from dotenv import load_dotenv
 import configparser
+import codecs
+
 
 load_dotenv()
 
@@ -11,7 +13,8 @@ class Bot(commands.Bot):
     def __init__(self) -> None:
         # Load configuration
         self.config = configparser.ConfigParser()
-        self.config.read("config.ini")
+        self.config.readfp(codecs.open("config.ini", "r", "utf8"))
+
 
         self.COMMAND_PREFIX = self.config.get("Settings", "COMMAND_PREFIX")
         self.CATEGORY_NAME = self.config.get("Settings", "CATEGORY_NAME")
@@ -26,7 +29,7 @@ class Bot(commands.Bot):
         print(f"Logged in as {self.user}")
         guild = self.guilds[0]
 
-        # Print all category names and their channels
+        # Print all category names and their channels if need to paste in congfig.ini
         for category in guild.categories:
             print(f"Category: {category.name}")
             for channel in category.channels:
