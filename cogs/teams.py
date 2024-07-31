@@ -79,7 +79,7 @@ async def delete_voice_channels(bot):
         print("Category not found")
         return
 
-    channels_to_delete = [channel for channel in category.voice_channels if channel.name != bot.LOBBY_CHANNEL_NAME]
+    channels_to_delete = [channel for channel in category.voice_channels if "team" in channel.name.lower()]
     for channel in channels_to_delete:
         try:
             await channel.delete()
