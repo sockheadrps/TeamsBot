@@ -98,23 +98,23 @@ class InitialView(View):
     @discord.ui.button(label="Duo", style=discord.ButtonStyle.primary, custom_id="duo_button")
     async def duo_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.name != self.original_user:
-            await interaction.response.send_message("You didn't start this team selection!", ephemeral=True)
+            await interaction.response.send_message("You didn't start this team selection!")
             return
         await self.show_secondary_view(interaction, "duo")
 
     @discord.ui.button(label="Squads", style=discord.ButtonStyle.primary, custom_id="squads_button")
     async def squads_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.name != self.original_user:
-            await interaction.response.send_message("You didn't start this team selection!", ephemeral=True)
+            await interaction.response.send_message("You didn't start this team selection!")
             return
         await self.show_secondary_view(interaction, "squads")
 
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.danger, custom_id="initial_cancel_button")
     async def cancel_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.name != self.original_user:
-            await interaction.response.send_message("You didn't start this team selection!", ephemeral=True)
+            await interaction.response.send_message("You didn't start this team selection!")
             return
-        await interaction.response.send_message("Action cancelled!", ephemeral=True)
+        await interaction.response.send_message("Action cancelled!")
         self.stop()
 
     async def show_secondary_view(self, interaction: discord.Interaction, state: str):
@@ -208,7 +208,7 @@ class Teams(commands.Cog):
     async def teams(self, interaction: discord.Interaction):
         await delete_voice_channels(self.bot)
         view = InitialView(self.bot, interaction.user.name)
-        await interaction.response.send_message("Choose an option:", view=view, ephemeral=True)
+        await interaction.response.send_message("Choose an option:", view=view)
 
     @app_commands.command(name="clearvc", description="Clear the voice channels the bot has made")
     async def clearvc(self, interaction: discord.Interaction):
