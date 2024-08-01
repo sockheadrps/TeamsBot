@@ -11,6 +11,7 @@ def create_games_if_not_exists():
         with open("games.txt", "a") as f:
             f.write("0")
 
+
 def increase_num_games():
     with open("games.txt", mode="r+") as f:
         num_games = int(f.read())
@@ -18,10 +19,12 @@ def increase_num_games():
         f.write(str(num_games + 1))
         f.truncate()
 
+
 def get_num_games():
     with open("games.txt", mode="r") as f:
         num_games = f.read()
     return int(num_games)
+
 
 def generate_teams(team_size: int, participants: list[discord.Member]) -> list[list[discord.Member]]:
     random.shuffle(participants)
@@ -67,7 +70,7 @@ class IgnoreMemberMenu(Select):
         if interaction.user.name != self.original_user:
             await interaction.response.send_message("You didn't start this team selection!", ephemeral=True)
             return
-        
+
         selected_ids = [int(value) for value in self.values]
         self.ignored_members = set(selected_ids)
         selected_labels = [option.label for option in self.options if int(option.value) in self.ignored_members]
@@ -76,19 +79,10 @@ class IgnoreMemberMenu(Select):
 
 async def delete_voice_channels(bot):
     category = discord.utils.get(bot.guilds[0].categories, name=bot.CATEGORY_NAME)
-    if not category:
-        print("Category not found")
-        return
-
     channels_to_delete = [channel for channel in category.voice_channels if "team" in channel.name.lower()]
+
     for channel in channels_to_delete:
-        try:
-            await channel.delete()
-            print(f"Deleted channel {channel.name}")
-        except discord.Forbidden:
-            print(f"Missing permissions to delete channel {channel.name}")
-        except discord.HTTPException as e:
-            print(f"Failed to delete channel {channel.name}: {e}")
+        await channel.delete()
 
 
 class InitialView(View):
@@ -96,6 +90,7 @@ class InitialView(View):
         super().__init__(timeout=60)
         self.bot = bot
         self.original_user = user_name
+
     @discord.ui.button(label="Duo", style=discord.ButtonStyle.primary, custom_id="duo_button")
     async def duo_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.name != self.original_user:
@@ -119,7 +114,7 @@ class InitialView(View):
         self.stop()
 
     async def show_secondary_view(self, interaction: discord.Interaction, state: str):
-        view = SecondaryView(self.bot, state,  self.original_user)
+        view = SecondaryView(self.bot, state, self.original_user)
         await interaction.response.edit_message(content="Select options:", view=view)
 
 
@@ -132,16 +127,15 @@ class SecondaryView(View):
         self.add_item(self.ignore_menu)
         self.original_user = user_name
 
-
     @discord.ui.button(label="Generate Teams", style=discord.ButtonStyle.success, custom_id="generate_teams_button")
     async def gen_teams_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.name != self.original_user:
             await interaction.response.send_message("You didn't start this team selection!", ephemeral=True)
             return
-        
+
         ignored_members = getattr(self.ignore_menu, "ignored_members", set())
         members = [member for member in self.bot.lobby_channel.members if member.id not in ignored_members]
-        
+
         if not members:
             await interaction.response.send_message("No valid members to form teams!", ephemeral=True)
             return
@@ -163,7 +157,7 @@ class SecondaryView(View):
             await interaction.response.send_message("You didn't start this team selection!", ephemeral=True)
             return
         await interaction.response.send_message("Action cancelled!", ephemeral=True)
-        
+
         self.stop()
 
     async def show_final_view(self, interaction: discord.Interaction, teams):
@@ -171,7 +165,6 @@ class SecondaryView(View):
         embed = discord.Embed(title=f"Game Number {get_num_games()}", color=discord.Color.blurple())
 
         for i, team in enumerate(teams):
-
             embed.add_field(name=f"Team {i + 1}", value="\n".join([member.mention for member in team]), inline=False)
 
         await interaction.response.edit_message(content="Teams", embed=embed, view=view)
@@ -213,8 +206,7 @@ class Teams(commands.Cog):
 
     @app_commands.command(name="clearvc", description="Clear the voice channels the bot has made")
     async def clearvc(self, interaction: discord.Interaction):
-        for channel in self.bot.category:
-            await channel.delete()
+        await delete_voice_channels(self.bot)
         await interaction.response.send_message("Voice channels have been cleared!", ephemeral=True)
 
 
