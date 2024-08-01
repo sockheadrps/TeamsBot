@@ -82,7 +82,9 @@ async def delete_voice_channels(bot):
     channels_to_delete = [channel for channel in category.voice_channels if "team" in channel.name.lower()]
 
     for channel in channels_to_delete:
-        await channel.delete()
+        for member in channel.members:
+            if bot.lobby_channel:
+                await member.move_to(bot.lobby_channel)
 
 
 class InitialView(View):
@@ -204,7 +206,7 @@ class Teams(commands.Cog):
         view = InitialView(self.bot, interaction.user.name)
         await interaction.response.send_message("Choose an option:", view=view)
 
-    @app_commands.command(name="clearvc", description="Clear the voice channels the bot has made")
+    @app_commands.command(name="clearvc", description="Clear the voice channels this bot has made")
     async def clearvc(self, interaction: discord.Interaction):
         await delete_voice_channels(self.bot)
         await interaction.response.send_message("Voice channels have been cleared!", ephemeral=True)

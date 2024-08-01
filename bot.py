@@ -17,8 +17,10 @@ class Bot(commands.Bot):
         self.CATEGORY_NAME = self.config.get("Settings", "CATEGORY_NAME")
         self.LOBBY_CHANNEL_NAME = self.config.get("Settings", "LOBBY_CHANNEL_NAME")
         self.CREATE_CATAGORIES_AND_LOBBY = self.config.getboolean("Settings", "CREATE_CATAGORIES_AND_LOBBY")
+
         intents = discord.Intents.default()
         intents.message_content = True
+        intents.voice_states = True
         super().__init__(command_prefix=self.COMMAND_PREFIX, intents=intents)
 
     async def on_ready(self):
